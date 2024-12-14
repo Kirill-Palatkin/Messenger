@@ -1,4 +1,3 @@
-#  Дополнение 0
 def bin_expansion(bit_string, length):
     output = bit_string
     while len(output) != length + 2:
@@ -17,17 +16,14 @@ def circular_shift(number, w, bits, side):
         return int('0b' + bin_string[-bits:] + bin_string[:-bits], 2)
 
 
-# Операция a mod b
 def mod(a, b):
     return int(a % b)
 
 
-# Побитовое сложение по модулю 2
 def XOR(a, b):
     return a ^ b
 
 
-# Функция f
 def f(x, w):
     return mod(x * (2 * x + 1), 2**w)
 
