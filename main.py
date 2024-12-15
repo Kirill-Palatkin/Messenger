@@ -58,7 +58,9 @@ async def join_chat(chat_id):
 
     put_buttons(['Удалить чат'], onclick=lambda btn: delete_chat(chat_id))
 
-    msg_box.append(put_markdown(f'👤{nickname} присоединился(-лась) к чату'))
+    join_message = f'👤{nickname} присоединился(-лась) к чату'
+    msg_box.append(put_markdown(join_message))
+    chat['messages'].append(('system', join_message))
 
     refresh_task = run_async(refresh_msg(chat, nickname, msg_box))
 
@@ -70,7 +72,7 @@ async def join_chat(chat_id):
 
         data = await input_group("💭 Новое сообщение", [
             input(placeholder="Текст сообщения ...", name="msg"),
-            actions(name="cmd", buttons=["Отправить"]) 
+            actions(name="cmd", buttons=["Отправить"])
         ], validate=lambda m: ('msg', "Введите текст сообщения") if m["cmd"] == "Отправить" and not m['msg'] else None)
 
         if chat['is_deleted']:
@@ -106,12 +108,15 @@ async def refresh_msg(chat, nickname, msg_box):
 
         for m in chat['messages'][last_idx:]:
             if m[0] != nickname:
-                if chat['mode'] == "ECB":
-                    decrypted_message = decrypt(m[1], encrypt_result[1])
-                elif chat['mode'] == "CBC":
-                    decrypted_message = decrypt_CBC(m[1], encrypt_result[1], encrypt_result[2])
-                print('Расшифрованное сообщение:', decrypted_message)
-                msg_box.append(put_markdown(f"`{m[0]}`: {decrypted_message}"))
+                if m[0] == 'system':
+                    msg_box.append(put_markdown(m[1]))
+                else:
+                    if chat['mode'] == "ECB":
+                        decrypted_message = decrypt(m[1], encrypt_result[1])
+                    elif chat['mode'] == "CBC":
+                        decrypted_message = decrypt_CBC(m[1], encrypt_result[1], encrypt_result[2])
+                    print('Расшифрованное сообщение:', decrypted_message)
+                    msg_box.append(put_markdown(f"`{m[0]}`: {decrypted_message}"))
 
         if len(chat['messages']) > MAX_MESSAGES_COUNT:
             chat['messages'] = chat['messages'][len(chat['messages']) // 2:]
