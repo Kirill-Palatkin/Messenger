@@ -70,7 +70,7 @@ async def join_chat(chat_id):
 
         data = await input_group("💭 Новое сообщение", [
             input(placeholder="Текст сообщения ...", name="msg"),
-            actions(name="cmd", buttons=["Отправить"])  # Убираем кнопку "Выйти из чата"
+            actions(name="cmd", buttons=["Отправить"]) 
         ], validate=lambda m: ('msg', "Введите текст сообщения") if m["cmd"] == "Отправить" and not m['msg'] else None)
 
         if chat['is_deleted']:
